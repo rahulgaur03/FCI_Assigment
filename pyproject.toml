@@ -13,15 +13,9 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "pytest",
     "ruff",
-    "databricks-dlt",
     "databricks-connect>=15.4,<15.5",
-    "ipykernel",
 ]
-
-[project.scripts]
-main = "FCI_Assigment.main:main"
 
 [build-system]
 requires = ["hatchling"]

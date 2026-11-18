@@ -3,7 +3,9 @@ build/
 dist/
 __pycache__/
 *.egg-info
+*.pyc
 .venv/
+.DS_Store
 scratch/**
 !scratch/README.md
 **/explorations/**
