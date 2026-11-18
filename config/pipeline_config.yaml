@@ -1,0 +1,45 @@
+# Pipeline Configuration for Bank Transaction Ingestion
+
+environment:
+  catalog: "fci_assignment"
+  raw_schema: "raw"
+  target_schema: "silver"
+  volume_path: "/Volumes/fci_assignment/raw/raw_files"
+
+tables:
+  canonical_table: "canonical_transactions"
+  quarantine_table: "quarantine"
+  reconciliation_table: "reconciliation_summary"
+  partition_by: "txn_date"
+
+ingestion:
+  file_pattern: "*.csv"
+  read_mode: "PERMISSIVE"
+  encoding: "UTF-8"
+  header: true
+
+schema:
+  expected_columns:
+    - "account_number"
+    - "txn_date"
+    - "txn_time"
+    - "description"
+    - "ref_no"
+    - "debit"
+    - "credit"
+    - "balance"
+    - "account_type"
+
+dedup:
+  keys:
+    - "account_number"
+    - "ref_no"
+
+formats:
+  date_formats:
+    - "d-M-yyyy"
+    - "d/M/yyyy"
+    - "yyyy-MM-dd"
+  time_formats:
+    - "H:mm:ss"
+    - "HH:mm:ss"
