@@ -1,0 +1,7 @@
+account_number,txn_date,txn_time,description,ref_no,debit,credit,balance,account_type,_source_file,reason_code,error_message
+AC100000003,01-08-2026,10:15:00,NEFT INWARD REMITTANCE,,,5000,45000,SAVINGS,batch_2026-08-01.csv,MISSING_REF_NO,Transaction reference number is missing
+AC100000007,01-08-2026,14:02:00,SUSPENSE ENTRY,REF555555,1200,1200,34000,CURRENT,batch_2026-08-01.csv,BOTH_DEBIT_AND_CREDIT,Both debit (1200) and credit (1200) are populated
+AC100000011,01-08-2026,09:00:00,POS PURCHASE RETAIL STORE,REF321000,,,22000,SAVINGS,batch_2026-08-01.csv,NEITHER_DEBIT_NOR_CREDIT,Neither debit nor credit amount is populated
+AC100000003,1/08/2026,10:15:00,NEFT INWARD REMITTANCE,,,5000,45000,SAVINGS,batch_2026-08-02.csv,MISSING_REF_NO,Transaction reference number is missing
+AC100000007,1/08/2026,14:02:00,SUSPENSE ENTRY,REF555555,1200,1200,34000,CURRENT,batch_2026-08-02.csv,BOTH_DEBIT_AND_CREDIT,Both debit (1200) and credit (1200) are populated
+AC100000011,1/08/2026,9:00:00,POS PURCHASE RETAIL STORE,REF321000,,,22000,SAVINGS,batch_2026-08-02.csv,NEITHER_DEBIT_NOR_CREDIT,Neither debit nor credit amount is populated
