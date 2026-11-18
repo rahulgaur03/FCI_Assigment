@@ -1,4 +1,4 @@
 run_timestamp,source_file,rows_read,rows_quarantined,duplicates_removed,new_rows_loaded,canonical_total_records,backfill_transactions,backfill_credit,backfill_debit,backfill_net_effect,quarantine_reasons_json
-2026-11-18T06:08:33.634Z,batch_2026-08-01.csv,187,3,184,0,180,0,0.0,0.0,0.0,"{""BOTH_DEBIT_AND_CREDIT"": 1, ""MISSING_REF_NO"": 1, ""NEITHER_DEBIT_NOR_CREDIT"": 1}"
-2026-11-18T06:08:46.010Z,batch_2026-08-02.csv,365,3,184,178,358,0,0.0,0.0,0.0,"{""BOTH_DEBIT_AND_CREDIT"": 1, ""MISSING_REF_NO"": 1, ""NEITHER_DEBIT_NOR_CREDIT"": 1}"
-2026-11-18T06:08:56.821Z,batch_2026-08-04_late_correction.csv,3,0,0,3,361,3,0.0,0.0,0.0,{}
+2026-11-18T10:19:43.203Z,batch_2026-08-01.csv,187,3,4,180,180,0,0.0,0.0,0.0,"{""BOTH_DEBIT_AND_CREDIT"": 1, ""MISSING_REF_NO"": 1, ""NEITHER_DEBIT_NOR_CREDIT"": 1}"
+2026-11-18T10:20:06.758Z,batch_2026-08-02.csv,365,3,184,178,358,0,0.0,0.0,0.0,"{""BOTH_DEBIT_AND_CREDIT"": 1, ""MISSING_REF_NO"": 1, ""NEITHER_DEBIT_NOR_CREDIT"": 1}"
+2026-11-18T10:20:19.976Z,batch_2026-08-04_late_correction.csv,3,0,0,3,361,3,97000.0,18500.0,78500.0,{}

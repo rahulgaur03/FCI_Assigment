@@ -16,6 +16,8 @@ resources:
           default: ${var.catalog}
         - name: schema
           default: ${var.schema}
+        - name: reset_tables
+          default: "false"
 
       tasks:
         - task_key: incremental_ingestion_task

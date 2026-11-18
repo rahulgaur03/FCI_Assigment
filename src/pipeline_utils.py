@@ -156,7 +156,7 @@ def merge_into_canonical(spark, clean_df, canonical_table, dedup_keys=None, part
 
     if spark.catalog.tableExists(canonical_table):
         existing_keys = spark.table(canonical_table).select(*keys)
-        new_insertable_df = clean_df.join(existing_keys, keys, "left_anti")
+        new_insertable_df = clean_df.join(existing_keys, keys, "left_anti").cache()
         new_rows_count = new_insertable_df.count()
 
         merge_condition = " AND ".join([f"t.{k} = s.{k}" for k in keys])
