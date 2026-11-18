@@ -1,8 +1,17 @@
-# Bank Transaction Ingestion: Idempotent Ingestion & Safe Replay
+# Senior Data Engineer Take-Home Assignment: Assignment 1
+# Idempotent Ingestion & Safe Replay
 
 A production-grade, incremental ingestion pipeline for bank transaction extracts built with **PySpark and Delta Lake** on Databricks.
 
 The pipeline handles real-world messy feeds: malformed rows, duplicate transactions, accidental full-file re-deliveries, and late-arriving backfills with strict idempotency and complete audit reconciliation.
+
+---
+
+## Assignment Chosen & Executive Summary
+
+- **Assignment Selected:** Assignment 1 — *Idempotent Ingestion & Safe Replay*
+- **Technology Stack:** PySpark + Delta Lake on Databricks Runtime (DBR) + Unity Catalog (Silver layer).
+- **Core Outcome:** Successfully ingested 3 messy bank feeds (555 total rows read) into **361 canonical records**, routed **6 corrupt rows** to quarantine with specific reason codes, rejected **188 duplicate rows**, merged **3 late-arriving backfill transactions** (net +\$78,500.00 cash impact), and proved idempotency via automated replay assertion with **0 discrepancy**.
 
 ---
 
@@ -30,18 +39,20 @@ Upload the daily extract CSV files from `raw_files/` into your Databricks Volume
 - **Databricks CLI / DAB Execution:**
   ```bash
   databricks bundle deploy --target dev
-  databricks bundle run
+  databricks bundle run transaction_ingestion_job
   ```
 
 ---
 
-## Target Delta Tables in Unity Catalog
+## Target Delta Tables in Unity Catalog & Output CSVs
 
-| Delta Table | Unity Catalog Path | Description |
-| :--- | :--- | :--- |
-| **`canonical_transactions`** | `fci_assignment.silver.canonical_transactions` | Clean, deduplicated financial transactions (`PARTITIONED BY (txn_date)`). |
-| **`quarantine`** | `fci_assignment.silver.quarantine` | Raw malformed records routed with `reason_code` and `error_message`. |
-| **`reconciliation_summary`** | `fci_assignment.silver.reconciliation_summary` | Audit log tracking rows read, loaded, quarantined, and backfill movement. |
+All results are inspectable both as live **Unity Catalog Delta Tables** and as exported CSV files in [`output/`](output/):
+
+| Asset / Table | Unity Catalog Path | Local CSV Export | Description |
+| :--- | :--- | :--- | :--- |
+| **`canonical_transactions`** | `fci_assignment.silver.canonical_transactions` | [`output/canonical_transactions.csv`](output/canonical_transactions.csv) (361 rows) | Clean, deduplicated financial transactions (`PARTITIONED BY (txn_date)`). |
+| **`quarantine`** | `fci_assignment.silver.quarantine` | [`output/quarantine.csv`](output/quarantine.csv) (6 rows) | Raw malformed records routed with `reason_code` and `error_message`. |
+| **`reconciliation_summary`** | `fci_assignment.silver.reconciliation_summary` | [`output/reconciliation_summary.csv`](output/reconciliation_summary.csv) (3 rows) | Audit log tracking rows read, loaded, quarantined, and backfill movement. |
 
 ---
 
@@ -112,13 +123,41 @@ Row Conservation Equation:
 
 ---
 
+## Assumptions Made
+
+1. **Bank Transaction Invariant:** Single-entry bookkeeping per record (either debit or credit, never both or neither).
+2. **Chronological File Processing:** Files in the Volume are processed in chronological/lexicographical order by filename (`batch_YYYY-MM-DD.csv`).
+3. **Currency & Precision:** All monetary amounts are in standard financial format and cast to `DECIMAL(18,2)` to prevent floating-point rounding errors.
+4. **Correction Identification:** Files containing `correction` or `backfill` in their filename represent backfills into historical dates.
+
+---
+
+## Stretch Goal: Parameterized Configuration
+
+The pipeline isolates configuration from implementation in [`config/pipeline_config.yaml`](config/pipeline_config.yaml):
+- **Dedup Keys:** Configured as `["account_number", "ref_no"]` (can be swapped to `["transaction_id"]` for another bank).
+- **Date/Time Formats:** Array of accepted date/time patterns.
+- **Expected Columns & Table Names:** All catalog, schema, and Delta table names are parameterized.
+- Onboarding a new source bank feed requires a configuration file change without code forks.
+
+---
+
+## What I Would Do Differently or Add with More Time
+
+1. **Automated CI/CD Test Suite:** Add a GitHub Actions pipeline running `pytest` with a localized Spark session testing validation and dedup corner cases.
+2. **Dead-Letter Queue (DLQ) Remediation Workflow:** Build an operational dashboard (Databricks Lakeview / Genie) allowing data stewards to view quarantined records, correct typos (e.g. missing ref_no), and replay them into the canonical pipeline.
+3. **Alerting & Thresholds:** Integrate alerts (Slack/PagerDuty) triggered when the quarantine rate exceeds a threshold (e.g. >1% of a daily batch).
+4. **Lakeflow / Auto Loader Streaming:** If feed frequency increases from daily batch drops to hourly/near real-time, transition the file reader from batch `spark.read` to Databricks Auto Loader (`spark.readStream.format("cloudFiles")`).
+
+---
+
 ## Project Structure
 
 ```
 FCI_Assigment/
 ├── config/
 │   └── pipeline_config.yaml               # YAML configuration (tables, volume paths, CSV schema, dedup keys)
-├── raw_files/                             # The 3 source CSV files & notes
+├── raw_files/                             # The 3 source CSV files & assignment notes
 │   ├── batch_2026-08-01.csv
 │   ├── batch_2026-08-02.csv
 │   ├── batch_2026-08-04_late_correction.csv
@@ -129,5 +168,9 @@ FCI_Assigment/
 ├── resources/
 │   └── transaction_ingestion_job.job.yml  # Databricks Asset Bundle job definition
 ├── databricks.yml                         # DAB bundle configuration
-└── README.md                              # Documentation & design decisions
+├── output/                                # Exported CSV deliverables
+│   ├── canonical_transactions.csv         # 361 deduplicated canonical records
+│   ├── quarantine.csv                     # 6 quarantined records with reason codes
+│   └── reconciliation_summary.csv         # 3 audit records with backfill metrics
+└── README.md                              # Complete assignment documentation
 ```
