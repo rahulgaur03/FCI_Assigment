@@ -26,16 +26,4 @@ targets:
       host: https://dbc-c6c23bfe-7dea.cloud.databricks.com
     variables:
       catalog: fci_assignment
-      schema: dev
-  prod:
-    mode: production
-    workspace:
-      host: https://dbc-c6c23bfe-7dea.cloud.databricks.com
-      # We explicitly deploy to /Workspace/Users/rahulgaur0304@gmail.com to make sure we only have a single copy.
-      root_path: /Workspace/Users/rahulgaur0304@gmail.com/.bundle/${bundle.name}/${bundle.target}
-    variables:
-      catalog: fci_assignment
-      schema: prod
-    permissions:
-      - user_name: rahulgaur0304@gmail.com
-        level: CAN_MANAGE
+      schema: silver

@@ -1,0 +1,28 @@
+# Ingestion pipeline job for bank transaction extracts.
+
+resources:
+  jobs:
+    transaction_ingestion_job:
+      name: transaction_ingestion_job
+
+      trigger:
+        # Run daily
+        periodic:
+          interval: 1
+          unit: DAYS
+
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: schema
+          default: ${var.schema}
+
+      tasks:
+        - task_key: incremental_ingestion_task
+          notebook_task:
+            notebook_path: ../src/ingestion_notebook.py
+
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "4"
